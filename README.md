@@ -1,17 +1,17 @@
-# forge-assembly-configurator
+# aps-assembly-configurator
 
-A simple, generic assembly configurator built using the [Autodesk Forge](https://forge.autodesk.com) platform.
+A simple, generic assembly configurator built using [Autodesk Platform Services](https://aps.autodesk.com).
 
-[![Preview](https://img.youtube.com/vi/Jz3izhFTEps/0.jpg)](https://www.youtube.com/watch?v=Jz3izhFTEps "Forge Configurator Demo")
+[![Preview](https://img.youtube.com/vi/Jz3izhFTEps/0.jpg)](https://www.youtube.com/watch?v=Jz3izhFTEps "Configurator Demo")
 
-Live demo: https://forge-assembly-configurator.autodesk.io
+Live demo: https://aps-assembly-configurator.autodesk.io
 
 ## Development
 
 ### Prerequisites
 
 - [Node.js](https://nodejs.org/en/download) (LTS version is recommended)
-- [Forge application](https://forge.autodesk.com/en/docs/oauth/v2/tutorials/create-app)
+- [APS credentials](https://forge.autodesk.com/en/docs/oauth/v2/tutorials/create-app)
 
 ### Folder structure
 

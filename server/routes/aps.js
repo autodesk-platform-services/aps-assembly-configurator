@@ -1,9 +1,9 @@
 const express = require('express');
 const { AuthenticationClient } = require('forge-server-utils');
-const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET } = require('../../config.js');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET } = require('../../config.js');
 
 let router = express.Router();
-let authenticationClient = new AuthenticationClient(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET);
+let authenticationClient = new AuthenticationClient(APS_CLIENT_ID, APS_CLIENT_SECRET);
 
 router.get('/token', async function (req, res, next) {
     try {

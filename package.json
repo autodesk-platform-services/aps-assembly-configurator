@@ -1,13 +1,12 @@
 {
-  "name": "forge-assembly-configurator",
+  "name": "aps-assembly-configurator",
   "version": "0.1.0",
-  "description": "Generic configurator built with Autodesk Forge and Design Automation for Inventor.",
+  "description": "Generic configurator built with Autodesk Platform Services and Design Automation for Inventor.",
   "scripts": {
     "start": "node server/app.js"
   },
   "keywords": [
-    "autodesk",
-    "forge",
+    "autodesk-platform-services",
     "configurator"
   ],
   "author": "Petr Broz <petr.broz@autodesk.com>",

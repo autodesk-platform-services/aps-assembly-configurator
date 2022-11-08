@@ -1,9 +1,9 @@
 const fs = require('fs-extra');
-const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, INVENTOR_PIPELINE } = require('../config.js');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, INVENTOR_PIPELINE } = require('../config.js');
 const { APPBUNDLE_NAME, APPBUNDLE_ALIAS, APPBUNDLE_PATH, ACTIVITY_ID, ACTIVITY_ALIAS, ENGINE, DESCRIPTION } = INVENTOR_PIPELINE;
 const { DesignAutomationClient, DesignAutomationID } = require('forge-server-utils');
 
-const FullAppBundleID = new DesignAutomationID(FORGE_CLIENT_ID, APPBUNDLE_NAME, APPBUNDLE_ALIAS).toString();
+const FullAppBundleID = new DesignAutomationID(APS_CLIENT_ID, APPBUNDLE_NAME, APPBUNDLE_ALIAS).toString();
 const ActivityCommands = [`$(engine.path)\\InventorCoreConsole.exe /al "$(appbundles[${APPBUNDLE_NAME}].path)" "$(args[configJson].path)" "$(args[templateArchive].path)"`];
 const ActivityParams = {
     configJson: {
@@ -33,7 +33,7 @@ const ActivityParams = {
 };
 
 async function setup() {
-    const designAutomationClient = new DesignAutomationClient({ client_id: FORGE_CLIENT_ID, client_secret: FORGE_CLIENT_SECRET });
+    const designAutomationClient = new DesignAutomationClient({ client_id: APS_CLIENT_ID, client_secret: APS_CLIENT_SECRET });
 
     try {
         // Create/update app bundle

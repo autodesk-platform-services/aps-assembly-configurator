@@ -17,7 +17,7 @@ export async function initializeViewer(container, config) {
  * @param {function} callback Callback function to be called with access token and expiration time (in seconds).
  */
  export async function getAccessToken(callback) {
-    const resp = await fetch('/api/forge/token');
+    const resp = await fetch('/api/aps/token');
     if (resp.ok) {
         const { access_token, expires_in } = await resp.json();
         callback(access_token, expires_in);

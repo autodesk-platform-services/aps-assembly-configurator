@@ -1,10 +1,10 @@
 const express = require('express');
 const { AuthenticationClient } = require('forge-server-utils');
-const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_CALLBACK_URL, inDebugMode } = require('../../config.js');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, inDebugMode } = require('../../config.js');
 
 const EmailRegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 let router = express.Router();
-let authenticationClient = new AuthenticationClient(FORGE_CLIENT_ID, FORGE_CLIENT_SECRET);
+let authenticationClient = new AuthenticationClient(APS_CLIENT_ID, APS_CLIENT_SECRET);
 
 router.get('/login', async function (req, res, next) {
     if (inDebugMode()) {
@@ -13,7 +13,7 @@ router.get('/login', async function (req, res, next) {
         res.redirect('/');
         return;
     }
-    const url = authenticationClient.getAuthorizeRedirect(['user-profile:read', 'user:read'], FORGE_CALLBACK_URL);
+    const url = authenticationClient.getAuthorizeRedirect(['user-profile:read', 'user:read'], APS_CALLBACK_URL);
     res.redirect(url);
 });
 
@@ -28,7 +28,7 @@ router.get('/logout', async function (req, res, next) {
 
 router.get('/callback', async function (req, res, next) {
     try {
-        const token = await authenticationClient.getToken(req.query.code, FORGE_CALLBACK_URL);
+        const token = await authenticationClient.getToken(req.query.code, APS_CALLBACK_URL);
         req.session.access_token = token.access_token;
         req.session.refresh_token = token.refresh_token;
         req.session.expires_at = Date.now() + token.expires_in * 1000;

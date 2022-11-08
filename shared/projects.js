@@ -3,19 +3,19 @@ const fs = require('fs-extra');
 const { v4: uuid } = require('uuid');
 const fetch = require('node-fetch');
 const { DataManagementClient, DesignAutomationClient, DesignAutomationID, ModelDerivativeClient, urnify, ThumbnailSize } = require('forge-server-utils');
-const { FORGE_CLIENT_ID, FORGE_CLIENT_SECRET, FORGE_BUCKET, INVENTOR_PIPELINE, CACHE_FOLDER } = require('../config.js');
+const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_BUCKET, INVENTOR_PIPELINE, CACHE_FOLDER } = require('../config.js');
 const { getTemplate } = require('./templates.js');
 
-const FullActivityID = new DesignAutomationID(FORGE_CLIENT_ID, INVENTOR_PIPELINE.ACTIVITY_ID, INVENTOR_PIPELINE.ACTIVITY_ALIAS).toString();
+const FullActivityID = new DesignAutomationID(APS_CLIENT_ID, INVENTOR_PIPELINE.ACTIVITY_ID, INVENTOR_PIPELINE.ACTIVITY_ALIAS).toString();
 const CacheFolder = path.join(CACHE_FOLDER, 'projects');
 if (!fs.existsSync(CacheFolder)) {
     console.log('Creating a project cache folder', CacheFolder);
     fs.mkdirSync(CacheFolder);
 }
 
-const dataManagementClient = new DataManagementClient({ client_id: FORGE_CLIENT_ID, client_secret: FORGE_CLIENT_SECRET });
-const modelDerivativeClient = new ModelDerivativeClient({ client_id: FORGE_CLIENT_ID, client_secret: FORGE_CLIENT_SECRET });
-const designAutomationClient = new DesignAutomationClient({ client_id: FORGE_CLIENT_ID, client_secret: FORGE_CLIENT_SECRET });
+const dataManagementClient = new DataManagementClient({ client_id: APS_CLIENT_ID, client_secret: APS_CLIENT_SECRET });
+const modelDerivativeClient = new ModelDerivativeClient({ client_id: APS_CLIENT_ID, client_secret: APS_CLIENT_SECRET });
+const designAutomationClient = new DesignAutomationClient({ client_id: APS_CLIENT_ID, client_secret: APS_CLIENT_SECRET });
 
 async function createProject(name, authorName, authorId, templateId) {
     const id = uuid();
@@ -33,14 +33,14 @@ async function createProject(name, authorName, authorId, templateId) {
         urn: null,
         inventor_engine: INVENTOR_PIPELINE.ENGINE
     };
-    await dataManagementClient.uploadObject(FORGE_BUCKET, `projects/${id}/project.json`, 'application/json', JSON.stringify(project));
+    await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/project.json`, 'application/json', JSON.stringify(project));
     return project;
 }
 
 async function getProject(id) {
     const projectCachePath = path.join(CacheFolder, id, 'project.json');
     if (!fs.existsSync(projectCachePath)) {
-        const buff = await dataManagementClient.downloadObject(FORGE_BUCKET, `projects/${id}/project.json`);
+        const buff = await dataManagementClient.downloadObject(APS_BUCKET, `projects/${id}/project.json`);
         const project = JSON.parse(buff.toString());
         // Only cache the JSON when the project has already been published
         if (project.public) {
@@ -59,13 +59,13 @@ async function updateProject(id, callback) {
         throw new Error('Project has been published and cannot be modified anymore.');
     }
     callback(project);
-    await dataManagementClient.uploadObject(FORGE_BUCKET, `projects/${id}/project.json`, 'application/json', JSON.stringify(project));
+    await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/project.json`, 'application/json', JSON.stringify(project));
     return project;
 }
 
 async function deleteProject(id) {
-    const objects = await dataManagementClient.listObjects(FORGE_BUCKET, `projects/${id}`);
-    const deletes = objects.map(obj => dataManagementClient.deleteObject(FORGE_BUCKET, obj.objectKey));
+    const objects = await dataManagementClient.listObjects(APS_BUCKET, `projects/${id}`);
+    const deletes = objects.map(obj => dataManagementClient.deleteObject(APS_BUCKET, obj.objectKey));
     await Promise.all(deletes);
     const cachePath = path.join(CacheFolder, id);
     if (fs.existsSync(cachePath)) {
@@ -77,7 +77,7 @@ async function getProjectLogs(id) {
     const project = await getProject(id);
     const logsCachePath = path.join(CacheFolder, id, 'logs.txt');
     if (!fs.existsSync(logsCachePath)) {
-        const buff = await dataManagementClient.downloadObject(FORGE_BUCKET, `projects/${id}/logs.txt`);
+        const buff = await dataManagementClient.downloadObject(APS_BUCKET, `projects/${id}/logs.txt`);
         // Cache the logs only if the build has already completed
         if (project.status === 'finished' || project.status === 'failed') {
             fs.ensureDirSync(path.dirname(logsCachePath));
@@ -97,17 +97,17 @@ async function addProjectLogs(id, message) {
     // Unfortunately the only way to append the logs today is to download, extend, and re-upload...
     let buff;
     try {
-        buff = await dataManagementClient.downloadObject(FORGE_BUCKET, `projects/${id}/logs.txt`);
+        buff = await dataManagementClient.downloadObject(APS_BUCKET, `projects/${id}/logs.txt`);
     } catch (err) {
         buff = '';
     }
     buff = buff.toString() + `[${new Date().toISOString()}] ${message}\n`;
-    await dataManagementClient.uploadObject(FORGE_BUCKET, `projects/${id}/logs.txt`, 'plain/text', buff);
+    await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/logs.txt`, 'plain/text', buff);
 }
 
 async function listProjects() {
     let projects = [];
-    const items = await dataManagementClient.listObjects(FORGE_BUCKET, 'projects/');
+    const items = await dataManagementClient.listObjects(APS_BUCKET, 'projects/');
     for (const item of items) {
         if (item.objectKey.match(/^projects\/[a-z0-9]{8}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{4}-[a-z0-9]{12}\/project\.json$/)) {
             projects.push(getProject(item.objectKey.split('/')[1]));
@@ -139,7 +139,7 @@ async function getProjectOutput(id, name) {
     }
     const outputCachePath = path.join(CacheFolder, id, name);
     if (!fs.existsSync(outputCachePath)) {
-        const buff = await dataManagementClient.downloadObject(FORGE_BUCKET, `projects/${id}/${name}`);
+        const buff = await dataManagementClient.downloadObject(APS_BUCKET, `projects/${id}/${name}`);
         fs.ensureDirSync(path.dirname(outputCachePath));
         fs.writeFileSync(outputCachePath, buff);
         return buff;
@@ -182,20 +182,20 @@ async function buildProject(id, config) {
 
         // Upload config JSON
         await log(`Uploading configuration file`);
-        const configJsonObject = await dataManagementClient.uploadObject(FORGE_BUCKET, `projects/${id}/config.json`, 'application/json', JSON.stringify(config));
+        const configJsonObject = await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/config.json`, 'application/json', JSON.stringify(config));
         await status('inprogress', 10);
 
         // Preparing ZIP file with template assets
         await log(`Preparing template assets`);
-        const assetsZipObject = await dataManagementClient.getObjectDetails(FORGE_BUCKET, `templates/${project.template_id}/assets.zip`);
+        const assetsZipObject = await dataManagementClient.getObjectDetails(APS_BUCKET, `templates/${project.template_id}/assets.zip`);
         await status('inprogress', 20);
 
         // Generate signed urls for input and output files in DM
         await log('Generating signed urls for input and output files');
-        const assetsZipSignedUrl = await dataManagementClient.createSignedUrl(FORGE_BUCKET, assetsZipObject.objectKey, 'read');
-        const configJsonSignedUrl = await dataManagementClient.createSignedUrl(FORGE_BUCKET, configJsonObject.objectKey, 'read');
-        const outputZipSignedUrl = await dataManagementClient.createSignedUrl(FORGE_BUCKET, `projects/${id}/output.zip`, 'readwrite');
-        const outputRfaSignedUrl = await dataManagementClient.createSignedUrl(FORGE_BUCKET, `projects/${id}/output.rfa`, 'readwrite');
+        const assetsZipSignedUrl = await dataManagementClient.createSignedUrl(APS_BUCKET, assetsZipObject.objectKey, 'read');
+        const configJsonSignedUrl = await dataManagementClient.createSignedUrl(APS_BUCKET, configJsonObject.objectKey, 'read');
+        const outputZipSignedUrl = await dataManagementClient.createSignedUrl(APS_BUCKET, `projects/${id}/output.zip`, 'readwrite');
+        const outputRfaSignedUrl = await dataManagementClient.createSignedUrl(APS_BUCKET, `projects/${id}/output.rfa`, 'readwrite');
         await status('inprogress', 30);
 
         // Create a work item
@@ -234,7 +234,7 @@ async function buildProject(id, config) {
         }
         const resp = await fetch(workItem.reportUrl);
         const report = await resp.text();
-        await dataManagementClient.uploadObject(FORGE_BUCKET, `projects/${id}/report.txt`, 'plain/text', report);
+        await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/report.txt`, 'plain/text', report);
         if (workItem.status === 'success') {
             await log('Job finished successfully: ' + JSON.stringify(workItem));
         } else {
@@ -253,7 +253,7 @@ async function buildProject(id, config) {
 
         // Translate the output for viewing
         await log('Converting results for viewing');
-        const outputZipObject = await dataManagementClient.getObjectDetails(FORGE_BUCKET, `projects/${id}/output.zip`);
+        const outputZipObject = await dataManagementClient.getObjectDetails(APS_BUCKET, `projects/${id}/output.zip`);
         const urn = urnify(outputZipObject.objectId);
         const translation = await modelDerivativeClient.submitJob(urn, [{ type: 'svf', views: ['2d', '3d'] }], 'template.iam', true);
         await log(JSON.stringify(translation));

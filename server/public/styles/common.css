@@ -10,6 +10,7 @@ body {
 
 .navbar-brand > img {
     height: 1.5em;
+    margin-right: 1em;
 }
 
 .breadcrumb {
