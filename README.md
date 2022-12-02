@@ -1,6 +1,8 @@
-# aps-assembly-configurator
+# Assembly Configurator
 
 A simple, generic assembly configurator built using [Autodesk Platform Services](https://aps.autodesk.com).
+
+![screenshot](./thumbnail.png)
 
 [![Preview](https://img.youtube.com/vi/Jz3izhFTEps/0.jpg)](https://www.youtube.com/watch?v=Jz3izhFTEps "Configurator Demo")
 

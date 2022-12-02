@@ -9,7 +9,6 @@
     "autodesk-platform-services",
     "configurator"
   ],
-  "author": "Petr Broz <petr.broz@autodesk.com>",
   "license": "MIT",
   "dependencies": {
     "adm-zip": "^0.5.3",
