@@ -9,7 +9,7 @@
 [![Model Derivative](https://img.shields.io/badge/Model%20Derivative-v2-green.svg)](https://aps.autodesk.com/en/docs/model-derivative/v2/overview/)
 [![Viewer](https://img.shields.io/badge/Viewer-v7-green.svg)](https://aps.autodesk.com/en/docs/viewer/v7/developers_guide/overview/)
 
-A simple, generic assembly configurator built using [Autodesk Platform Services](https://aps.autodesk.com).
+A simple, generic assembly configurator built using [Autodesk Platform Services](https://aps.autodesk.com). The application has two main interfaces: _template_ authoring and _project_ authoring. Template authoring involves selecting a set of 3D models that can be assembled together, and defining their connecting (snapping) points. During project authoring the user then selects a specific template, drag&drops invididual models and snaps them together, and saves the result.
 
 ![thumbnail](./thumbnail.png)
 
