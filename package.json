@@ -14,7 +14,7 @@
     "adm-zip": "^0.5.3",
     "cookie-session": "^1.4.0",
     "express": "^4.17.1",
-    "forge-server-utils": "^8.3.0",
+    "forge-server-utils": "^9.0.0",
     "fs-extra": "^9.1.0",
     "multer": "^1.4.2",
     "node-fetch": "^2.6.1",
