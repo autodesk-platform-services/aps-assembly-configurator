@@ -45,10 +45,12 @@ function hasOwnerAccess(req, project) {
 // List existing projects
 router.get('/', async function (req, res, next) {
     try {
+        console.log('Listing projects...');
         const projects = await listProjects();
         // List all projects that are (a) public, or (b) owned by the user
         res.json(projects.filter(project => project.public || (req.session && req.session.user_id && req.session.user_id === project.author_id)));
     } catch (err) {
+        console.error('Could not list projects:', err);
         next(err);
     }
 });
@@ -56,6 +58,7 @@ router.get('/', async function (req, res, next) {
 // Create new project
 router.post('/', upload.none(), async function (req, res, next) {
     try {
+        console.log('Creating new project...');
         if (!req.session || !req.session.user_id) {
             throw new Error('Access denied');
         }
@@ -66,6 +69,7 @@ router.post('/', upload.none(), async function (req, res, next) {
         const project = await createProject(name, req.session.user_name || 'Unnamed', req.session.user_id, template_id);
         res.redirect(`/project.html?id=${project.id}`);
     } catch (err) {
+        console.error('Could not create project:', err);
         next(err);
     }
 });
@@ -73,12 +77,14 @@ router.post('/', upload.none(), async function (req, res, next) {
 // Retrieve project details
 router.get('/:id', async function (req, res, next) {
     try {
+        console.log('Retrieving project details...');
         const project = await getProject(req.params.id);
         if (!hasPublicAccess(req, project)) {
             throw new Error('Access denied');
         }
         res.json(project);
     } catch (err) {
+        console.error('Could not retrieve project details:', err);
         next(err);
     }
 });
@@ -86,6 +92,7 @@ router.get('/:id', async function (req, res, next) {
 // Remove project
 router.delete('/:id', async function (req, res, next) {
     try {
+        console.log('Removing project...');
         const project = await getProject(req.params.id);
         if (!hasOwnerAccess(req, project)) {
             throw new Error('Access denied');
@@ -93,6 +100,7 @@ router.delete('/:id', async function (req, res, next) {
         await deleteProject(project.id);
         res.status(200).end();
     } catch (err) {
+        console.error('Could not remove project:', err);
         next(err);
     }
 });
@@ -100,6 +108,7 @@ router.delete('/:id', async function (req, res, next) {
 // Build the project
 router.post('/:id/build', async function (req, res, next) {
     try {
+        console.log('Building project...');
         const project = await getProject(req.params.id);
         if (!hasOwnerAccess(req, project)) {
             throw new Error('Access denied');
@@ -111,6 +120,7 @@ router.post('/:id/build', async function (req, res, next) {
         buildProject(req.params.id, req.body);
         res.json({ status: 'ok' });
     } catch (err) {
+        console.log('Could not build project:', err);
         next(err);
     }
 });
@@ -118,12 +128,14 @@ router.post('/:id/build', async function (req, res, next) {
 // Get project status
 router.get('/:id/status', async function (req, res, next) {
     try {
+        console.log('Retrieving project status...');
         const project = await getProject(req.params.id);
         if (!hasPublicAccess(req, project)) {
             throw new Error('Access denied');
         }
         res.json({ status: project.status, progress: project.progress, urn: project.urn });
     } catch (err) {
+        console.log('Could not retrieve project status:', err);
         next(err);
     }
 });
@@ -131,6 +143,7 @@ router.get('/:id/status', async function (req, res, next) {
 // Get project logs
 router.get('/:id/logs.txt', async function (req, res, next) {
     try {
+        console.log('Retrieving project logs...');
         const project = await getProject(req.params.id);
         if (!hasPublicAccess(req, project)) {
             throw new Error('Access denied');
@@ -138,6 +151,7 @@ router.get('/:id/logs.txt', async function (req, res, next) {
         const logs = await getProjectLogs(project.id);
         res.type('.txt').send(logs);
     } catch (err) {
+        console.log('Could not retrieve project logs:', err);
         next(err);
     }
 });
@@ -145,6 +159,7 @@ router.get('/:id/logs.txt', async function (req, res, next) {
 // Get project report
 router.get('/:id/config.json', async function (req, res, next) {
     try {
+        console.log('Retrieving project report...');
         const project = await getProject(req.params.id);
         if (!hasPublicAccess(req, project)) {
             throw new Error('Access denied');
@@ -156,6 +171,7 @@ router.get('/:id/config.json', async function (req, res, next) {
             res.status(404).end();
         }
     } catch (err) {
+        console.log('Could not retrieve project report:', err);
         next(err);
     }
 });
@@ -163,6 +179,7 @@ router.get('/:id/config.json', async function (req, res, next) {
 // Get project report
 router.get('/:id/report.txt', async function (req, res, next) {
     try {
+        console.log('Retrieving project report...');
         const project = await getProject(req.params.id);
         if (!hasPublicAccess(req, project)) {
             throw new Error('Access denied');
@@ -174,6 +191,7 @@ router.get('/:id/report.txt', async function (req, res, next) {
             res.status(404).end();
         }
     } catch (err) {
+        console.log('Could not retrieve project report:', err);
         next(err);
     }
 });
@@ -181,6 +199,7 @@ router.get('/:id/report.txt', async function (req, res, next) {
 // Get project thumbnail
 router.get('/:id/thumbnail.png', async function (req, res, next) {
     try {
+        console.log('Retrieving project thumbnail...');
         const project = await getProject(req.params.id);
         if (!hasPublicAccess(req, project)) {
             throw new Error('Access denied');
@@ -192,6 +211,7 @@ router.get('/:id/thumbnail.png', async function (req, res, next) {
             res.status(404).end();
         }
     } catch (err) {
+        console.log('Could not retrieve project thumbnail:', err);
         next(err);
     }
 });
@@ -199,6 +219,7 @@ router.get('/:id/thumbnail.png', async function (req, res, next) {
 // Get project output (Inventor assembly)
 router.get('/:id/output.zip', async function (req, res, next) {
     try {
+        console.log('Retrieving project output...');
         const project = await getProject(req.params.id);
         if (!hasPublicAccess(req, project)) {
             throw new Error('Access denied');
@@ -210,6 +231,7 @@ router.get('/:id/output.zip', async function (req, res, next) {
             res.status(404).end();
         }
     } catch (err) {
+        console.log('Could not retrieve project output:', err);
         next(err);
     }
 });
@@ -217,6 +239,7 @@ router.get('/:id/output.zip', async function (req, res, next) {
 // Get project output (Revit family)
 router.get('/:id/output.rfa', async function (req, res, next) {
     try {
+        console.log('Retrieving project output...');
         const project = await getProject(req.params.id);
         if (!hasPublicAccess(req, project)) {
             throw new Error('Access denied');
@@ -228,6 +251,7 @@ router.get('/:id/output.rfa', async function (req, res, next) {
             res.status(404).end();
         }
     } catch (err) {
+        console.log('Could not retrieve project output:', err);
         next(err);
     }
 });
