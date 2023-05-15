@@ -33,7 +33,7 @@ async function createProject(name, authorName, authorId, templateId) {
         urn: null,
         inventor_engine: INVENTOR_PIPELINE.ENGINE
     };
-    await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/project.json`, 'application/json', JSON.stringify(project));
+    await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/project.json`, Buffer.from(JSON.stringify(project)));
     return project;
 }
 
@@ -59,7 +59,7 @@ async function updateProject(id, callback) {
         throw new Error('Project has been published and cannot be modified anymore.');
     }
     callback(project);
-    await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/project.json`, 'application/json', JSON.stringify(project));
+    await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/project.json`, Buffer.from(JSON.stringify(project)));
     return project;
 }
 
@@ -102,7 +102,7 @@ async function addProjectLogs(id, message) {
         buff = '';
     }
     buff = buff.toString() + `[${new Date().toISOString()}] ${message}\n`;
-    await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/logs.txt`, 'plain/text', buff);
+    await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/logs.txt`, Buffer.from(buff));
 }
 
 async function listProjects() {
@@ -182,7 +182,7 @@ async function buildProject(id, config) {
 
         // Upload config JSON
         await log(`Uploading configuration file`);
-        const configJsonObject = await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/config.json`, 'application/json', JSON.stringify(config));
+        const configJsonObject = await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/config.json`, Buffer.from(JSON.stringify(config)));
         await status('inprogress', 10);
 
         // Preparing ZIP file with template assets
@@ -234,7 +234,7 @@ async function buildProject(id, config) {
         }
         const resp = await fetch(workItem.reportUrl);
         const report = await resp.text();
-        await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/report.txt`, 'plain/text', report);
+        await dataManagementClient.uploadObject(APS_BUCKET, `projects/${id}/report.txt`, Buffer.from(report));
         if (workItem.status === 'success') {
             await log('Job finished successfully: ' + JSON.stringify(workItem));
         } else {

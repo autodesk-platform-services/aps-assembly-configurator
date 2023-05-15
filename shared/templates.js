@@ -67,13 +67,13 @@ async function createTemplate(name, authorName, authorId, sharedAssetsFilename, 
         modules: []
     };
     if (sharedAssetsFilename) {
-        const sharedAssetsObject = await dataManagementClient.uploadObjectStream(APS_BUCKET, `templates/${id}/assets.zip`, 'application/octet-stream', fs.createReadStream(sharedAssetsFilename));
+        const sharedAssetsObject = await dataManagementClient.uploadObjectStream(APS_BUCKET, `templates/${id}/assets.zip`, fs.createReadStream(sharedAssetsFilename));
         template.shared_assets = sharedAssetsObject.objectKey;
     }
     if (thumbnailFilename) {
-        await dataManagementClient.uploadObjectStream(APS_BUCKET, `templates/${id}/thumbnail.png`, 'application/octet-stream', fs.createReadStream(thumbnailFilename));
+        await dataManagementClient.uploadObjectStream(APS_BUCKET, `templates/${id}/thumbnail.png`, fs.createReadStream(thumbnailFilename));
     }
-    await dataManagementClient.uploadObject(APS_BUCKET, `templates/${id}/template.json`, 'application/json', JSON.stringify(template));
+    await dataManagementClient.uploadObject(APS_BUCKET, `templates/${id}/template.json`, Buffer.from(JSON.stringify(template)));
     return template;
 }
 
@@ -169,7 +169,7 @@ async function addTemplateModule(id, name, sharedAssetsPath, transform, connecto
     modelDerivativeClient.submitJob(module.urn, [{ type: 'svf', views: ['3d'] }], sharedAssetsPath);
 
     template.modules.push(module);
-    await dataManagementClient.uploadObject(APS_BUCKET, `templates/${id}/template.json`, 'application/json', JSON.stringify(template));
+    await dataManagementClient.uploadObject(APS_BUCKET, `templates/${id}/template.json`, Buffer.from(JSON.stringify(template)));
 
     return module;
 }
@@ -192,7 +192,7 @@ async function updateTemplateModule(templateId, moduleId, transform, connectors)
     if (connectors) {
         _module.connectors = connectors;
     }
-    await dataManagementClient.uploadObject(APS_BUCKET, `templates/${templateId}/template.json`, 'application/json', JSON.stringify(template));
+    await dataManagementClient.uploadObject(APS_BUCKET, `templates/${templateId}/template.json`, Buffer.from(JSON.stringify(template)));
     return _module;
 }
 
@@ -229,7 +229,7 @@ async function publishTemplate(id) {
     template.public = true;
     const templateCachePath = path.join(CacheFolder, id, 'template.json');
     fs.writeJsonSync(templateCachePath, template);
-    await dataManagementClient.uploadObjectStream(APS_BUCKET, `templates/${id}/template.json`, 'application/json', fs.createReadStream(templateCachePath));
+    await dataManagementClient.uploadObjectStream(APS_BUCKET, `templates/${id}/template.json`, fs.createReadStream(templateCachePath));
 }
 
 module.exports = {
