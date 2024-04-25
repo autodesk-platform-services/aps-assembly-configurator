@@ -12,9 +12,9 @@
   "license": "MIT",
   "dependencies": {
     "adm-zip": "^0.5.3",
+    "aps-sdk-node": "^10.0.1",
     "cookie-session": "^1.4.0",
     "express": "^4.17.1",
-    "forge-server-utils": "^9.0.0",
     "fs-extra": "^9.1.0",
     "multer": "^1.4.2",
     "node-fetch": "^2.6.1",

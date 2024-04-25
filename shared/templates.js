@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const { v4: uuid } = require('uuid');
 const AdmZip = require('adm-zip');
-const { DataManagementClient, ModelDerivativeClient, urnify, ThumbnailSize } = require('forge-server-utils');
+const { DataManagementClient, ModelDerivativeClient, urnify, ThumbnailSize } = require('aps-sdk-node');
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_BUCKET, CACHE_FOLDER } = require('../config.js');
 
 /*

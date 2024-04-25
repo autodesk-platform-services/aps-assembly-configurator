@@ -1,5 +1,5 @@
 const express = require('express');
-const { AuthenticationClient } = require('forge-server-utils');
+const { AuthenticationClient } = require('aps-sdk-node');
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_CALLBACK_URL, inDebugMode } = require('../../config.js');
 
 const EmailRegExp = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -34,11 +34,11 @@ router.get('/callback', async function (req, res, next) {
         req.session.expires_at = Date.now() + token.expires_in * 1000;
         const profile = await authenticationClient.getUserProfile(req.session.access_token);
         // Clean up the user name if it's an email
-        if (EmailRegExp.test(profile.userName.toLowerCase())) {
-            profile.userName = profile.userName.substr(0, profile.userName.indexOf('@'));
+        if (EmailRegExp.test(profile.name.toLowerCase())) {
+            profile.name = profile.name.substr(0, profile.name.indexOf('@'));
         }
         req.session.user_id = profile.userId;
-        req.session.user_name = profile.userName;
+        req.session.user_name = profile.name;
         res.redirect('/');
     } catch(err) {
         next(err);
@@ -52,7 +52,7 @@ router.get('/user.js', async function (req, res, next) {
             const DEBUG_MODE = ${inDebugMode()};
         `);
     } else {
-        res.type('.js').send(`const USER = null;`);
+        res.type('.js').send(`const USER = null; const DEBUG_MODE = false;`);
     }
 });
 

@@ -49,6 +49,19 @@ append-field@^1.0.0:
   resolved "https://registry.yarnpkg.com/append-field/-/append-field-1.0.0.tgz#1e3440e915f0b1203d23748e78edd7b9b5b43e56"
   integrity sha512-klpgFSWLW1ZEs8svjfb7g4qWY0YS5imI82dTg+QahUvJ8YqAY0P10Uk8tTyh9ZGuYEZEMaeJYCF5BFuX552hsw==
 
+aps-sdk-node@^10.0.1:
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/aps-sdk-node/-/aps-sdk-node-10.0.1.tgz#2e5e56153c8207ec710ad1229152e7207edfedd5"
+  integrity sha512-jA5DJjFQjkT+bnLeSWMQIlfBim4S0z6J33sg93ZoY/leHZ+3d++Y90YwtqKI7noCfS0iv/Q9t23HmN5D5zSQIA==
+  dependencies:
+    "@types/adm-zip" "^0.4.32"
+    "@types/fs-extra" "^8.0.0"
+    adm-zip "^0.4.13"
+    axios "^0.21.1"
+    form-data "^2.5.1"
+    fs-extra "^8.1.0"
+    retry-axios "^2.6.0"
+
 array-flatten@1.1.1:
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/array-flatten/-/array-flatten-1.1.1.tgz#9a5f699051b1e7073328f2a008968b64ea2955d2"
@@ -280,19 +293,6 @@ follow-redirects@^1.14.0:
   version "1.15.2"
   resolved "https://registry.yarnpkg.com/follow-redirects/-/follow-redirects-1.15.2.tgz#b460864144ba63f2681096f274c4e57026da2c13"
   integrity sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==
-
-forge-server-utils@^9.0.0:
-  version "9.0.0"
-  resolved "https://registry.yarnpkg.com/forge-server-utils/-/forge-server-utils-9.0.0.tgz#3ccc7cca8b1166eeb57f21a72dde80ac2d75dac9"
-  integrity sha512-/1JqJM4Ko4WiVTlidk7Jl6AaCXQe1klZvt45IUFPJB/EvsLjYmArKvrLwbobTLya8eWsDWBBRxcJ/c1QHyuGJA==
-  dependencies:
-    "@types/adm-zip" "^0.4.32"
-    "@types/fs-extra" "^8.0.0"
-    adm-zip "^0.4.13"
-    axios "^0.21.1"
-    form-data "^2.5.1"
-    fs-extra "^8.1.0"
-    retry-axios "^2.6.0"
 
 form-data@^2.5.1:
   version "2.5.1"

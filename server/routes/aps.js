@@ -1,5 +1,5 @@
 const express = require('express');
-const { AuthenticationClient } = require('forge-server-utils');
+const { AuthenticationClient } = require('aps-sdk-node');
 const { APS_CLIENT_ID, APS_CLIENT_SECRET } = require('../../config.js');
 
 let router = express.Router();

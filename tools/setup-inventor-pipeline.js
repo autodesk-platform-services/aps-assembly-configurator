@@ -1,7 +1,7 @@
 const fs = require('fs-extra');
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, INVENTOR_PIPELINE } = require('../config.js');
 const { APPBUNDLE_NAME, APPBUNDLE_ALIAS, APPBUNDLE_PATH, ACTIVITY_ID, ACTIVITY_ALIAS, ENGINE, DESCRIPTION } = INVENTOR_PIPELINE;
-const { DesignAutomationClient, DesignAutomationID } = require('forge-server-utils');
+const { DesignAutomationClient, DesignAutomationID } = require('aps-sdk-node');
 
 const FullAppBundleID = new DesignAutomationID(APS_CLIENT_ID, APPBUNDLE_NAME, APPBUNDLE_ALIAS).toString();
 const ActivityCommands = [`$(engine.path)\\InventorCoreConsole.exe /al "$(appbundles[${APPBUNDLE_NAME}].path)" "$(args[configJson].path)" "$(args[templateArchive].path)"`];

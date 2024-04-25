@@ -2,7 +2,7 @@ const path = require('path');
 const fs = require('fs-extra');
 const { v4: uuid } = require('uuid');
 const fetch = require('node-fetch');
-const { DataManagementClient, DesignAutomationClient, DesignAutomationID, ModelDerivativeClient, urnify, ThumbnailSize } = require('forge-server-utils');
+const { DataManagementClient, DesignAutomationClient, DesignAutomationID, ModelDerivativeClient, urnify, ThumbnailSize } = require('aps-sdk-node');
 const { APS_CLIENT_ID, APS_CLIENT_SECRET, APS_BUCKET, INVENTOR_PIPELINE, CACHE_FOLDER } = require('../config.js');
 const { getTemplate } = require('./templates.js');
 
