@@ -37,7 +37,7 @@ router.get('/callback', async function (req, res, next) {
         if (EmailRegExp.test(profile.name.toLowerCase())) {
             profile.name = profile.name.substr(0, profile.name.indexOf('@'));
         }
-        req.session.user_id = profile.userId;
+        req.session.user_id = profile.sub;
         req.session.user_name = profile.name;
         res.redirect('/');
     } catch(err) {
